@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaEnvelope } from 'react-icons/fa';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaLock } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import Swal from 'sweetalert2';
 
@@ -16,29 +16,38 @@ const toast = Swal.mixin({
     }
 });
 
-const ResetRequest = () => {
-    const [email, setEmail] = useState('');
+const ResetPassword = () => {
+    const { token } = useParams();
+    const [password, setPassword] = useState('');
+    const [confirm, setConfirm] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (password !== confirm) {
+            toast.fire({
+                icon: 'error',
+                title: 'Las contraseñas no coinciden'
+            });
+            return;
+        }
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5000/auth/request-reset', {
+            const response = await fetch('http://localhost:5000/auth/reset-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
+                body: JSON.stringify({ token, password })
             });
 
             const data = await response.json();
 
-            if (!response.ok) throw new Error(data.error || 'Error al solicitar el reseteo');
+            if (!response.ok) throw new Error(data.error || 'Error al cambiar la contraseña');
 
             toast.fire({
                 icon: 'success',
-                title: 'Si el correo existe, recibirás instrucciones.'
+                title: '¡Contraseña actualizada!'
             });
             setTimeout(() => navigate('/login'), 1800);
         } catch (err) {
@@ -60,21 +69,34 @@ const ResetRequest = () => {
         >
             <div className="login-card">
                 <div className="login-header">
-                    <h2>Recuperar Contraseña</h2>
-                    <p>Ingresa tu correo para recibir instrucciones</p>
+                    <h2>Restablecer Contraseña</h2>
+                    <p>Ingresa tu nueva contraseña</p>
                 </div>
 
                 <form onSubmit={handleSubmit}>
                     <div className="mb-3 input-group">
                         <span className="input-group-text">
-                            <FaEnvelope />
+                            <FaLock />
                         </span>
                         <input
-                            type="email"
+                            type="password"
                             className="form-control"
-                            placeholder="Correo electrónico"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Nueva contraseña"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="mb-3 input-group">
+                        <span className="input-group-text">
+                            <FaLock />
+                        </span>
+                        <input
+                            type="password"
+                            className="form-control"
+                            placeholder="Confirmar contraseña"
+                            value={confirm}
+                            onChange={(e) => setConfirm(e.target.value)}
                             required
                         />
                     </div>
@@ -88,7 +110,7 @@ const ResetRequest = () => {
                     >
                         {loading ? (
                             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        ) : 'Enviar'}
+                        ) : 'Restablecer'}
                     </motion.button>
 
                     <div className="login-footer mt-4" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -100,4 +122,4 @@ const ResetRequest = () => {
     );
 };
 
-export default ResetRequest;
+export default ResetPassword;

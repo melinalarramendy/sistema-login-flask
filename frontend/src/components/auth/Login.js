@@ -36,13 +36,15 @@ const Login = () => {
 
             if (!response.ok) throw new Error('Credenciales inválidas');
 
-            const { token } = await response.json();
-            localStorage.setItem('token', token);
+            const data = await response.json();
+            localStorage.setItem('token', data.access_token);
             toast.fire({
                 icon: 'success',
                 title: '¡Inicio de sesión exitoso!'
             });
-            navigate('/dashboard');
+            setTimeout(() => {
+                navigate('/dashboard');
+            }, 1200);
         } catch (err) {
             toast.fire({
                 icon: 'error',
@@ -95,12 +97,6 @@ const Login = () => {
                             required
                         />
                     </div>
-
-                    {error && (
-                        <div className="alert alert-danger">
-                            {error}
-                        </div>
-                    )}
 
                     <motion.button
                         whileHover={{ scale: 1.02 }}

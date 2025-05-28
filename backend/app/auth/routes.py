@@ -124,7 +124,7 @@ def request_reset():
 
     token = create_access_token(identity=str(user['_id']), expires_delta=timedelta(minutes=15))
 
-    reset_link = f"http://localhost:5000/reset-password?token={token}"
+    reset_link = f"http://localhost:3000/reset-password/{token}"
     print(f"Enlace para restablecer contraseña: {reset_link}")  
 
     return jsonify({"success": True, "message": "Enlace de restablecimiento enviado"}), 200
