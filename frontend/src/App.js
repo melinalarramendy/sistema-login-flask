@@ -6,6 +6,7 @@ import ResetRequest from './components/auth/ResetRequest';
 import ResetPassword from './components/auth/ResetPassword';
 import Dashboard from './components/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
+import Error404 from './components/Error404';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ResetRequest />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="*" element={<Error404 />} />
 
 
         {/* RUTAS PRIVADAS */}
